@@ -1,0 +1,60 @@
+/* Saved Artworks Styles */
+.saved-artworks-container {
+  width: 100%;
+}
+.saved-artworks-container .gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+  animation: fadeIn 0.6s ease-in-out;
+}
+@media (max-width: 768px) {
+  .saved-artworks-container .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.75rem;
+  }
+}
+@media (max-width: 480px) {
+  .saved-artworks-container .gallery-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+}
+@media (min-width: 1440px) {
+  .saved-artworks-container .gallery-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.no-saved-message {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+.no-saved-message .icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.no-saved-message h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 0.5rem;
+}
+
+.no-saved-message p {
+  color: #a0aec0;
+  max-width: 28rem;
+  margin: 0 auto;
+}

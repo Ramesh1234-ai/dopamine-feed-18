@@ -1,0 +1,37 @@
+/* Preferences Page Styles */
+
+.preferences-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f1419 0%, #1a1a2e 50%, #16213e 100%);
+}
+
+.preferences-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.preferences-header {
+  margin-bottom: 2rem;
+}
+
+.preferences-header h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #6366f1 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.preferences-header p {
+  color: #a0aec0;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .preferences-header h1 {
+    font-size: 1.875rem;
+  }
+}

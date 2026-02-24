@@ -1,0 +1,30 @@
+/* Search Bar Styles */
+
+.search-bar-container {
+  width: 100%;
+}
+
+.search-bar-container input {
+  transition: all 0.3s ease;
+}
+
+.search-bar-container input:focus {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1), 0 0 0 6px rgba(99, 102, 241, 0.05);
+}
+
+.search-bar-container select {
+  transition: all 0.3s ease;
+}
+
+.search-bar-container select:focus {
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1), 0 0 0 6px rgba(99, 102, 241, 0.05);
+}
+
+/* Category Filter Buttons */
+.search-bar-container button {
+  transition: all 0.2s ease;
+}
+
+.search-bar-container button:hover:not(.search-apply) {
+  transform: translateY(-2px);
+}

@@ -1,0 +1,39 @@
+/* Preferences Tabs Styles */
+
+.preferences-tabs {
+  margin-bottom: 2rem;
+  overflow-x: auto;
+}
+
+.preferences-tabs .flex {
+  display: flex;
+  white-space: nowrap;
+}
+
+.preferences-tabs button {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.preferences-tabs button:hover {
+  color: #a78bfa;
+}
+
+.preferences-tabs button.active {
+  color: #6366f1;
+}
+
+@media (max-width: 640px) {
+  .preferences-tabs button {
+    padding: 1rem !important;
+    font-size: 0.875rem;
+  }
+
+  .preferences-tabs button span {
+    display: none;
+  }
+
+  .preferences-tabs button span:first-child {
+    display: inline;
+  }
+}

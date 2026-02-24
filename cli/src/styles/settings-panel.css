@@ -1,0 +1,114 @@
+/* Settings Panel Styles */
+
+.settings-panel {
+  width: 100%;
+}
+
+.settings-section {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid #334155;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.settings-section:hover {
+  border-color: #6366f1;
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.05);
+}
+
+.settings-section h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.settings-section .space-y-4 > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-section label {
+  transition: color 0.2s ease;
+  margin-bottom: 0.5rem;
+}
+
+.settings-section input,
+.settings-section select,
+.settings-section textarea {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  color: #ffffff;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.settings-section input::placeholder,
+.settings-section textarea::placeholder {
+  color: #64748b;
+}
+
+.settings-section input:focus,
+.settings-section select:focus,
+.settings-section textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  background-color: #0f172a;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.settings-section input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  accent-color: #6366f1;
+  transition: transform 0.2s ease;
+}
+
+.settings-section input[type="checkbox"]:hover {
+  transform: scale(1.1);
+}
+
+.settings-section .flex.items-center {
+  flex-direction: row;
+  margin-bottom: 1rem;
+}
+
+/* Action Buttons */
+.settings-panel > div:last-child {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.settings-panel button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.settings-panel button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .settings-panel > div:last-child {
+    flex-direction: column;
+    justify-content: stretch;
+  }
+
+  .settings-panel button {
+    width: 100%;
+  }
+}
