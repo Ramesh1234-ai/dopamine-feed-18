@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@clerk/clerk-react'
 import { preferencesManager, defaultPreferences } from '../../utils/preferencesManager'
-import '../../styles/settings-panel.css'
+
 
 export default function SettingsPanel() {
   const { user } = useAuth()

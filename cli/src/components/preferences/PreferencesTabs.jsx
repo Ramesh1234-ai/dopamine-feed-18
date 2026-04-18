@@ -1,4 +1,3 @@
-import '../../styles/preferences-tabs.css'
 
 export default function PreferencesTabs({ activeTab, setActiveTab }) {
   const tabs = [

@@ -1,7 +1,6 @@
 # Vercel
 .vercel
 .git
-
 # Environment variables
 .env
 .env.local
@@ -9,10 +8,14 @@
 .env.example
 cli/.env
 cli/.env.local
+cli/.env.example
+cli/.vercel
+cli/src/.vercel
 server/.env
 server/.env.example
 server/.env.local
-
+server/node_modules/
+cli/node_modules/
 # Dependencies
 node_modules/
 cli/node_modules/
@@ -56,3 +59,8 @@ coverage/
 .cache/
 .turbo/
 dist-ssr/
+.env*.local
+
+#esc
+docs/
+cli/dist/

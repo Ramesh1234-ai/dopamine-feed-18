@@ -7,79 +7,35 @@ export default function SearchBar({
   onFilterChange,
 }) {
   return (
-    <div style={{ marginBottom: '32px', width: '100%' }}>
-      <div style={{
-        background: 'rgba(30, 41, 59, 0.5)',
-        backdropFilter: 'blur(12px)',
-        border: '1px solid rgba(51, 65, 85, 0.5)',
-        borderRadius: '16px',
-        padding: '24px',
-        boxShadow: '0 10px 20px rgba(0, 0, 0, 0.2)'
-      }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '16px'
-        }}>
-          {/* Search Input */}
-          <div style={{ gridColumn: window.innerWidth < 768 ? 'span 1' : 'span 2' }}>
-            <label style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: '#d1d5db',
-              marginBottom: '8px'
-            }}>
-              Search Artworks
+    <div className="mb-8 w-full">
+      <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-lg hover:shadow-indigo-500/10 transition-shadow">
+        {/* Search and Sort Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+          {/* Search Input - Full Width on Mobile */}
+          <div className="md:col-span-2 lg:col-span-2">
+            <label className="block text-sm font-500 text-gray-300 mb-2">
+              🔍 Search Artworks
             </label>
-            <div style={{ position: 'relative' }}>
+            <div className="relative">
               <input
                 type="text"
                 placeholder="Search by name..."
                 value={search}
                 onChange={(e) => onSearchChange(e.target.value)}
-                style={{
-                  width: '100%',
-                  paddingLeft: '40px',
-                  paddingRight: '16px',
-                  paddingTop: '8px',
-                  paddingBottom: '8px',
-                  background: '#475569',
-                  border: '1px solid #334155',
-                  borderRadius: '8px',
-                  color: '#ffffff',
-                  fontSize: '16px',
-                  outline: 'none'
-                }}
+                className="w-full pl-4 pr-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
               />
             </div>
           </div>
 
           {/* Sort Dropdown */}
           <div>
-            <label style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: '#d1d5db',
-              marginBottom: '8px'
-            }}>
-              Sort By
+            <label className="block text-sm font-500 text-gray-300 mb-2">
+              📊 Sort By
             </label>
             <select
               value={sortBy}
               onChange={(e) => onSortChange(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '8px 16px',
-                background: '#475569',
-                border: '1px solid #334155',
-                borderRadius: '8px',
-                color: '#ffffff',
-                cursor: 'pointer',
-                fontSize: '16px',
-                outline: 'none'
-              }}
+              className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent cursor-pointer transition-all"
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
@@ -90,41 +46,24 @@ export default function SearchBar({
         </div>
 
         {/* Filter Category */}
-        <div style={{ marginTop: '16px' }}>
-          <label style={{
-            display: 'block',
-            fontSize: '14px',
-            fontWeight: '500',
-            color: '#d1d5db',
-            marginBottom: '8px'
-          }}>
-            Category
+        <div>
+          <label className="block text-sm font-500 text-gray-300 mb-3">
+            🏷️ Category
           </label>
-          <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '8px'
-          }}>
-             {['all', 'American', 'Arabian', 'Russia', 'Anime'].map(
-              (category) => (
-                <button
-                  key={category}
-                  onClick={() => onFilterChange(category)}
-                  style={{
-                    padding: '8px 16px',
-                    borderRadius: '8px',
-                    fontWeight: '500',
-                    border: 'none',
-                    cursor: 'pointer',
-                    background: filterCategory === category ? '#6366f1' : '#475569',
-                    color: filterCategory === category ? '#ffffff' : '#d1d5db',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
-                </button>
-              )
-            )}
+          <div className="flex flex-wrap gap-2">
+            {['all', 'American', 'Arabian', 'Russia', 'Anime'].map((category) => (
+              <button
+                key={category}
+                onClick={() => onFilterChange(category)}
+                className={`px-4 py-2 rounded-lg font-500 transition-all transform hover:scale-105 ${
+                  filterCategory === category
+                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/50'
+                    : 'bg-slate-700 text-gray-300 hover:bg-slate-600 hover:text-gray-200'
+                }`}
+              >
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </button>
+            ))}
           </div>
         </div>
       </div>

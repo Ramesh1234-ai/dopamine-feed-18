@@ -1,5 +1,5 @@
 
-function calculateTeamScore(profiles) {
+export const calculateTeamScore = (profiles) => {
   const avgRating = profiles.reduce((s,p)=>s+p.rating,0)/profiles.length;
   const diversity = new Set(profiles.flatMap(p=>p.categories)).size * 10;
   return Math.min(100, Math.round(
@@ -8,5 +8,4 @@ function calculateTeamScore(profiles) {
     0.20*80 +
     0.20*(profiles.length>=5?90:60)
   ));
-}
-module.exports = { calculateTeamScore };
+};

@@ -1,193 +1,151 @@
-import { useState } from 'react'
+import { useState, memo, useCallback } from 'react'
+import { useSavedArtworks } from '../../context/SavedArtworksContext'
+import { useToast } from '../../context/ToastContext'
+import ImageModal from './ImageModal'
 
-export default function GalleryCard({
-  profile,
-  isLiked,
-  isSaved,
-  onLike,
-  onSave,
-}) {
+/**
+ * GalleryCard - Individual artwork display card
+ * Memoized to prevent unnecessary re-renders
+ */
+const GalleryCard = memo(function GalleryCard({ profile, isLiked, onLike }) {
   const [imageLoaded, setImageLoaded] = useState(false)
+  const [showModal, setShowModal] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const { saved, addSaved, removeSaved, isSaved } = useSavedArtworks()
+  const { showToast } = useToast()
+
+  const profileSaved = isSaved(profile._id)
+
+  const handleSave = useCallback(async (e) => {
+    e.stopPropagation()
+    setIsSaving(true)
+    
+    try {
+      if (profileSaved) {
+        await removeSaved(profile._id)
+        showToast(`Removed "${profile.name}"`, 'info')
+      } else {
+        await addSaved(profile)
+        showToast(`Saved "${profile.name}"!`, 'success')
+      }
+    } catch (error) {
+      showToast(`Error: ${error.message}`, 'error')
+      console.error('Save error:', error)
+    } finally {
+      setIsSaving(false)
+    }
+  }, [profileSaved, profile, addSaved, removeSaved, showToast])
+
+  const handleLike = useCallback((e) => {
+    e.stopPropagation()
+    onLike?.(profile._id)
+    showToast(isLiked ? 'Unliked' : 'Liked!', 'success')
+  }, [isLiked, profile._id, onLike, showToast])
 
   return (
-    <div style={{
-      background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-      border: '1px solid #334155',
-      borderRadius: '16px',
-      overflow: 'hidden',
-      transition: 'all 0.3s ease',
-      cursor: 'pointer',
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%'
-    }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.transform = 'translateY(-8px)'
-      e.currentTarget.style.borderColor = '#6366f1'
-      e.currentTarget.style.boxShadow = '0 20px 40px rgba(99, 102, 241, 0.15)'
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.transform = 'translateY(0)'
-      e.currentTarget.style.borderColor = '#334155'
-      e.currentTarget.style.boxShadow = 'none'
-    }}
-    >
-      {/* Image Container */}
-      <div style={{
-        position: 'relative',
-        width: '100%',
-        paddingBottom: '100%',
-        overflow: 'hidden',
-        background: '#0f172a'
-      }}>
-        {!imageLoaded && (
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: '#475569',
-            animation: 'pulse 2s infinite'
-          }}></div>
-        )}
-        <img
-          src={profile.img}
-          alt={profile.name}
-          loading="lazy"
-          onLoad={() => setImageLoaded(true)}
-          onError={(e) => {
-            e.target.parentElement.style.display = 'none'
-          }}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            transition: 'transform 0.4s ease'
-          }}
-        />
-      </div>
-
-      {/* Card Content */}
-      <div style={{
-        padding: '16px',
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-end'
-      }}>
-        <h3 style={{
-          fontWeight: '600',
-          color: '#ffffff',
-          fontSize: '15px',
-          marginBottom: '4px',
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis'
-        }}>
-          {profile.name}
-        </h3>
-        <p style={{
-          color: '#a0aec0',
-          fontSize: '14px',
-          marginBottom: '12px'
-        }}>
-          {profile.artist || 'AI Generated'}
-        </p>
+    <>
+      <div className="group bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl overflow-hidden hover:border-indigo-500 transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/20 hover:-translate-y-2 flex flex-col h-full">
         
-        {/* Action Buttons */}
-        <div style={{
-          display: 'flex',
-          gap: '8px'
-        }}>
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              onLike && onLike(profile._id)
+        {/* Image Container */}
+        <div className="relative w-full aspect-square overflow-hidden bg-slate-900 cursor-pointer" onClick={() => setShowModal(true)}>
+          {!imageLoaded && (
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 animate-shimmer" />
+          )}
+          <img
+            src={profile.img}
+            alt={profile.name}
+            loading="lazy"
+            onLoad={() => setImageLoaded(true)}
+            onError={(e) => {
+              e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"%3E%3Crect fill="%23334155" width="400" height="400"/%3E%3Ctext x="50%25" y="50%25" font-size="48" fill="%23cbd5e1" text-anchor="middle" dy=".3em"%3EImage Error%3C/text%3E%3C/svg%3E'
             }}
-            style={{
-              flex: 1,
-              padding: '8px 12px',
-              background: isLiked ? '#6366f1' : '#334155',
-              border: isLiked ? '1px solid #6366f1' : '1px solid #475569',
-              color: '#ffffff',
-              borderRadius: '6px',
-              fontSize: '12px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '4px'
-            }}
-            onMouseEnter={(e) => {
-              if (!isLiked) {
-                e.currentTarget.style.background = '#475569'
-                e.currentTarget.style.borderColor = '#6366f1'
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isLiked) {
-                e.currentTarget.style.background = '#334155'
-                e.currentTarget.style.borderColor = '#475569'
-              }
-            }}
-          >
-            {isLiked ? '❤️' : '🤍'} Like
-          </button>
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
           
-          <button
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              alert(`Artwork "${profile.name}" ${isSaved ? 'removed from' : 'saved to'} favorites!`)
-              if (onSave) {
-                onSave(profile)
-              }
-            }}
-            style={{
-              flex: 1,
-              padding: '8px 12px',
-              background: isSaved ? '#9333ea' : '#334155',
-              border: isSaved ? '1px solid #9333ea' : '1px solid #475569',
-              color: '#ffffff',
-              borderRadius: '6px',
-              fontSize: '12px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '4px',
-              pointerEvents: 'auto',
-              zIndex: 10
-            }}
-            onMouseEnter={(e) => {
-              if (!isSaved) {
-                e.currentTarget.style.background = '#475569'
-                e.currentTarget.style.borderColor = '#9333ea'
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isSaved) {
-                e.currentTarget.style.background = '#334155'
-                e.currentTarget.style.borderColor = '#475569'
-              }
-            }}
-          >
-            {isSaved ? '⭐' : '☆'} Save
-          </button>
+          {/* Overlay Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
+
+        {/* Content */}
+        <div className="p-4 flex flex-col flex-1 justify-between">
+          {/* Title & Description */}
+          <div>
+            <h3 className="text-sm font-bold text-white truncate mb-1 group-hover:text-indigo-400 transition-colors">
+              {profile.name}
+            </h3>
+            <p className="text-xs text-slate-400 truncate">
+              {profile.artist || 'AI Generated'}
+            </p>
+
+            {/* Tags */}
+            {profile.tags && profile.tags.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1">
+                {profile.tags.slice(0, 3).map((tag, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-block px-2 py-0.5 bg-indigo-500/30 border border-indigo-400/50 rounded text-xs text-indigo-300"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+                {profile.tags.length > 3 && (
+                  <span className="inline-block px-2 py-0.5 text-xs text-slate-400">
+                    +{profile.tags.length - 3}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-2 mt-4">
+            <button
+              onClick={handleLike}
+              aria-label={isLiked ? 'Unlike artwork' : 'Like artwork'}
+              className={`flex-1 px-3 py-2 rounded-lg font-medium text-xs transition-all duration-200 flex items-center justify-center gap-1 ${
+                isLiked
+                  ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600 hover:border-indigo-500 border border-slate-600'
+              }`}
+            >
+              <span>{isLiked ? '❤️' : '🤍'}</span>
+              Like
+            </button>
+            
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              aria-label={profileSaved ? 'Remove from saved' : 'Save artwork'}
+              className={`flex-1 px-3 py-2 rounded-lg font-medium text-xs transition-all duration-200 flex items-center justify-center gap-1 disabled:opacity-60 disabled:cursor-not-allowed ${
+                profileSaved
+                  ? 'bg-purple-600 text-white hover:bg-purple-700'
+                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600 hover:border-purple-500 border border-slate-600'
+              }`}
+            >
+              <span>{isSaving ? '⚡' : profileSaved ? '⭐' : '☆'}</span>
+              {isSaving ? 'Saving...' : 'Save'}
+            </button>
+
+            <button
+              onClick={() => setShowModal(true)}
+              aria-label="View full image"
+              className="flex-1 px-3 py-2 rounded-lg font-medium text-xs bg-slate-700 text-gray-300 hover:bg-slate-600 hover:border-cyan-500 border border-slate-600 transition-all duration-200 flex items-center justify-center gap-1"
+            >
+              <span>👁️</span>
+              View
+            </button>
+          </div>
         </div>
       </div>
 
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-      `}</style>
-    </div>
+      {/* Image Modal */}
+      <ImageModal 
+        image={profile} 
+        isOpen={showModal} 
+        onClose={() => setShowModal(false)}
+      />
+    </>
   )
-}
+})
+
+export default GalleryCard

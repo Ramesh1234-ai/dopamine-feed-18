@@ -1,3 +1,3 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const dataSchema = new mongoose.Schema({}, { strict: false });
-module.exports = mongoose.model("Data", dataSchema, "ds");
+export const data = mongoose.model("data", dataSchema, "ds");

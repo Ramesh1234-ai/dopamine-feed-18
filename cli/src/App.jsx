@@ -1,36 +1,30 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from '@clerk/clerk-react'
+import { useSavedArtworks } from './context/SavedArtworksContext'
+import { useEffect } from 'react'
 import LoginPage from './components/auth/login'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
-import GalleryPage from './pages/GalleryPage'
-import PreferencesPage from './pages/PreferencesPage'
+import GalleryPage from './components/pages/GalleryPage'
+import PreferencesPage from './components/pages/PreferencesPage'
+import UploadPage from './components/pages/UploadPage'
 
 export default function App() {
-  const { isLoaded, isSignedIn } = useAuth()
+  const { isLoaded, isSignedIn, user } = useAuth()
+  const { initializeForUser } = useSavedArtworks()
+
+  // Initialize saved artworks context when user loads
+  useEffect(() => {
+    if (isLoaded && user?.id) {
+      initializeForUser(user.id)
+    }
+  }, [isLoaded, user?.id, initializeForUser])
 
   if (!isLoaded) {
     return (
-      <div style={{
-        width: '100%',
-        height: '100vh',
-        background: '#0f1419',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: '#ffffff',
-        fontSize: '18px'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{
-            width: '48px',
-            height: '48px',
-            border: '4px solid #6366f1',
-            borderTopColor: 'transparent',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-            margin: '0 auto 16px'
-          }}></div>
-          <p>Loading...</p>
+      <div className="w-full h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white text-lg">Loading...</p>
           <style>{`
             @keyframes spin {
               from { transform: rotate(0deg); }
@@ -43,7 +37,7 @@ export default function App() {
   }
 
   return (
-    <div style={{ width: '100%', minHeight: '100vh' }}>
+    <div className="w-full min-h-screen">
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route
@@ -51,6 +45,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <GalleryPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/upload"
+          element={
+            <ProtectedRoute>
+              <UploadPage />
             </ProtectedRoute>
           }
         />

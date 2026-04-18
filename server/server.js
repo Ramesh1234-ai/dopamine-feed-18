@@ -1,32 +1,52 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const axios = require("axios");
-require("dotenv").config();
-
+import dotenv from "dotenv";
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import  axios  from "axios";
+dotenv.config()
 const app = express();
 app.use(express.json());
-app.use(cors());
 
-mongoose.connect("mongodb://localhost:27017/doom")
+// Enhanced CORS configuration
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'http://localhost:5000',
+    process.env.VITE_API_URL || 'http://localhost:5173',
+    process.env.FRONTEND_URL || 'http://localhost:5173'
+  ].filter(Boolean),
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+app.use(cors(corsOptions));
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/doom")
 .then(()=> console.log("MongoDB Connected"))
-.catch(err => console.log(err));
-
-const Data = require("./models/Profile");
-
+.catch(err => console.log("MongoDB Connection Error:", err));
+// Import routes
+import uploadRoutes from './routes/Upload.route.js';
+import profileRoutes from "./routes/profileRoutes.js";
+import teamRoutes from "./routes/teamRoutes.js";
+import preferencesRoutes from "./routes/preferencesRoutes.js";
+// Import models
+import { data } from "./models/Profile.js";
+// ========================
+// EXISTING ROUTES
+// ========================
 app.get("/data", async (req,res)=>{
-  const result = await Data.find();
+  const result = await data.find();
   console.log(result);
   res.json(result);
 });
-
 app.post("/add", async (req,res)=>{
-  const newData = await Data.create(req.body);
+  const newData = await data.create(req.body);
   res.json(newData);
 });
 
 app.get("/search", async (req,res)=>{
-  const result = await Data.find(req.query);
+  const result = await data.find(req.query);
   res.json(result);
 });
 
@@ -47,7 +67,6 @@ app.get("/api/debug/models", async (req, res) => {
     res.status(500).json({ error: error.response?.data || error.message });
   }
 });
-
 // Grok API endpoint for roast generation
 app.post("/api/roast", async (req, res) => {
   try {
@@ -115,5 +134,22 @@ Make it savage but playful, no offensive content. Use modern internet slang and 
     });
   }
 });
-
-app.listen(5000, () => console.log(`Server running on http://localhost:5000/data`));
+// ========================
+// API ROUTES
+// ========================
+app.use("/api/images", uploadRoutes);
+app.use("/api/profiles", profileRoutes);
+app.use("/api/teams", teamRoutes);
+app.use("/api/preferences", preferencesRoutes);
+// ========================
+// ERROR HANDLER
+// ========================
+app.use((err, req, res, next) => {
+  console.error("Server Error:", err);
+  res.status(500).json({
+    success: false,
+    message: err.message || "Internal server error",
+  });
+});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
